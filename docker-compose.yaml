@@ -1,0 +1,15 @@
+##aca debo decir las especificaciones para levantar mi contenedor, siempre en el root de mi app y crear las variables DB_USER, DB_NAME Y DB_PASSWORD EN MI archivo .env
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:15.3
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    ports:
+      - 5432:5432

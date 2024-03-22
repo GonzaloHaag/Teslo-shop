@@ -1,0 +1,177 @@
+//LUEGO DE CADA CAMBIO A ESTE ESQUEMA SE DEBE EJECUTAR LA MIGRACION CON npx prisma migrate dev --name "nombre"
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//Las enumeraciones crean objetos pero no tablas, son utiles cuando tenemos muchas opciones
+//ME VOY A CREAR UNA ENUMERACION PARA LAS TALLAS --> aca van todas mis tablas para la base de datos mediante el ORM prisma
+enum Size {
+  XS
+  S
+  M
+  L
+  XL
+  XXL
+  XXXL
+}
+
+//enumeracion para los generos
+enum Gender {
+  men
+  women
+  kid
+  unisex
+}
+
+//ENUMERACION PARA LOS ROLES DE USUARIO
+enum Role {
+  admin
+  user
+}
+
+//las tablas se definen con un model en prisma. TABLA = MODELO
+model Category {
+  //me voy a crear la tabla category y sus campos
+  id      String    @id @default(uuid()) //por default sera el uuid
+  name    String    @unique //para no tener 2 categorias iguales le pongo el unique
+  //esto se pone automatico cuando cree la relacion en Product, pero no crea una nueva columna, simplemente establece la relacion
+  Product Product[]
+}
+
+//tabla del producto --> Debe tener una relacion con categoria
+
+model Product {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  inStock     Int
+  price       Float    @default(0)
+  sizes       Size[]   @default([]) //sera un arreglo de mi objeto Size y por default arranca vacio
+  slug        String   @unique
+  tags        String[] @default([])
+  gender      Gender
+
+  //relacion con la tabla de categoria
+  category     Category       @relation(fields: [categoryId], references: [id])
+  //aca estoy diciendo que va a relacionar el campo de Product llamado categoryId con el campo id de la tabla Category
+  categoryId   String //hace referencia al id de la categoria
+  ProductImage ProductImage[]
+  OrderItem    OrderItem[]
+
+  @@index([gender]) //para poder buscar el producto por un genero
+}
+
+model ProductImage {
+  id        Int     @id @default(autoincrement())
+  url       String
+  //crear relacion con el ProductId y lo vamos a relacionar con la referencia con el id del producto
+  //fields es el campo de mi tabla, y references el campo de la otra tabla
+  product   Product @relation(fields: [productId], references: [id])
+  //estoy creando un campo product que sera una relacion de mi productId(tabla productImage) con el campo id de la tabla Product
+  productId String
+}
+
+//tabla para el usuario
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique //siempre debe ser unico
+  emailVerified DateTime? //va a ser opcional por eso el ?
+  password      String
+  role          Role      @default(user) //rol por defecto sera user
+  image         String? //si tenemos la imagen del usuario la mostramos
+
+  userAddres UserAddress?
+  Order      Order[] //Porque un usuario puede tener muchas ordenes
+}
+
+//tabla para los paises para mostrarlos en /checkout/address
+model Country {
+  id           String         @id
+  name         String
+  UserAddress  UserAddress[]
+  OrderAddress OrderAddress[]
+}
+
+//tabla para la direccion de la persona, va a tener una relacion 1 a 1 con la tabla User. 1 usuario tendra 1 direccion
+model UserAddress {
+  id         String  @id @default(uuid())
+  firstName  String
+  lastName   String
+  address    String
+  address2   String?
+  postalCode String
+  city       String
+  phone      String
+
+  //Relacion con el pais 
+  country Country @relation(fields: [countryId], references: [id])
+
+  countryId String
+
+  //Relacion con el usuario --> el campo userId con el campo id de la tabla User
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
+}
+
+//Orden de compras --> Para la pagina de /checkout, el resumen de la orden
+model Order {
+  id           String    @id @default(uuid())
+  subTotal     Float
+  tax          Float
+  total        Float
+  itemsInOrder Int
+  estaPagada   Boolean   @default(false) //para saber si la orden esta pagada, por defecto falso porque no va a estar pagada
+  fechaDePago  DateTime?
+
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+
+  //Relacion con el usuario, que usuario esta creando la orden
+
+  user         User @relation(fields: [userId], references: [id]) //En fields la referencia de mi campo, en references el campo de la otra tabla
+  userId       String
+  OrderItem    OrderItem[]
+  OrderAddress OrderAddress?
+
+  transactionId String? //Este id seria el id que nos va a dar el tercero( Paypal, mercado pago --> Todos nos daran un id)
+}
+
+model OrderItem {
+  id       String @id @default(uuid())
+  quantity Int
+  price    Float
+  size     Size
+
+  //Relacion con la Order, porque necesitamos saber de quien es
+  order   Order  @relation(fields: [orderId], references: [id])
+  orderId String
+
+  //Relacion con el productol, para obtener su slug, su imagen o algo mas
+  producto  Product @relation(fields: [productId], references: [id])
+  productId String
+}
+
+model OrderAddress {
+  id         String  @id @default(uuid())
+  firstName  String
+  lastName   String
+  address    String
+  address2   String?
+  postalCode String
+  city       String
+  phone      String
+
+  //Relaciones
+  country   Country @relation(fields: [countryId], references: [id]) //para saber de que pais son las ordenes
+  countryId String
+
+  //Relacion con la orden
+  order   Order  @relation(fields: [orderId], references: [id])
+  orderId String @unique //Poruqe es una relacion 1 a 1
+}
