@@ -33,11 +33,11 @@ export async function generateMetadata(
   // const previousImages = (await parent).openGraph?.images || []
  
   return {
-    title: product?.title,
+    title: product?.title ?? "Producto no encontrado",
     description:product?.description ?? '',
     openGraph: {
       //el openGraph es lo que se utiliza en redes sociales
-      title: product?.title,
+      title: product?.title ?? "Producto no encontrado",
       description:product?.description ?? '',
       //aca se busca la url de la imagen en produccion https://misitioweb.com/products/product-1/image.png
       images: [`/products/${ product?.images[1] }`], //me tomo la segunda imagen que es mas chica
