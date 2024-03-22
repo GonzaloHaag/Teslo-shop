@@ -24,7 +24,7 @@ export const ProductMobileSlideShow = ({ images,title,className } :Props) => {
     <div className={ className }>
     <Swiper
         style={{
-          width:'100vw',
+          width:'100%',
           height:'500px',
 
         }}

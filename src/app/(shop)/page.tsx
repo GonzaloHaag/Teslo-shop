@@ -34,7 +34,7 @@ export default async  function HomePage ({ searchParams } : Props) {
  /**Desestructuro los productos porque esa funcion devuelve un objeto */
   return (
    <>
-   <Title title="Tienda" subtitle="Todos los productos" className="mb-2" />
+   <Title title="Tienda" subtitle="Todos los productos" className="mb-2 px-5 sm:px-0" />
    <ProductosGrid productos={ products } />
 
    <Pagination totalPages={ totalPages } />

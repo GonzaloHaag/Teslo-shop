@@ -64,8 +64,7 @@ export const paypalCheckPayment = async (paypalTransactionId: string) => {
         message:'El pago no se pudo realizar'
     }
   }
-    console.log( status,purchase_units);
-
+    
    
 };
 

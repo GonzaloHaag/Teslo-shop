@@ -42,7 +42,7 @@ export const SideBar = () => {
             <nav
                 //todo:efecto de slide
                 className={`
-        fixed p-5 right-0 top-0 w-[500px] h-screen bg-white z-20 shadow-2xl transform transition-all duration-300
+        fixed p-5 right-0 top-0 w-[80%] sm:w-[500px] h-screen bg-white z-20 shadow-2xl transform transition-all duration-300
         ${valorMenu === false && 'translate-x-full'}
         `}>
                 <IoCloseOutline
