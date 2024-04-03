@@ -12,7 +12,8 @@ export const searchProductsBdd = async( titleProduct:string ) => {
             where:{
                 title: {
                     //Voy a buscar los productos que en su titulo contengan esta palabra
-                    contains:titleProduct
+                search:titleProduct
+                
                 }
             },
             
