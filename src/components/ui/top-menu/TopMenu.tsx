@@ -67,7 +67,7 @@ export const TopMenu = () => {
 
       {/*search, cart y menu */}
       <div className='flex items-center'>
-        <InputSearchProducts />
+     
         {/**Yo aca ya se cuantos productos tengo en mi carrito, por lo que puedo dirigir a la página de carrito vacio
          * si yo no tengo ningun producto. Y si tengo algo, que dirija al carrito
          */}

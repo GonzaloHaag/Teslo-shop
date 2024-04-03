@@ -4,6 +4,7 @@ import { useUiStore } from "@/store/ui/ui-store";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { IoCloseOutline, IoLogInOutline, IoLogOutOutline, IoPeopleOutline, IoPersonOutline, IoSearchOutline, IoShieldOutline, IoShirtOutline, IoTicketOutline } from "react-icons/io5"
+import { InputSearchProducts } from "../top-menu/InputSearchProducts";
 
 export const SideBar = () => {
 
@@ -40,7 +41,7 @@ export const SideBar = () => {
 
             {/*side menu despegable */}
             <nav
-                //todo:efecto de slide
+                
                 className={`
         fixed p-5 right-0 top-0 w-[80%] sm:w-[500px] h-screen bg-white z-20 shadow-2xl transform transition-all duration-300
         ${valorMenu === false && 'translate-x-full'}
@@ -52,12 +53,7 @@ export const SideBar = () => {
                 />
 
                 {/*input */}
-                <div className="relative mt-14">
-                    <IoSearchOutline size={20} className="absolute top-3 left-2" />
-                    <input type="text" placeholder="Buscar"
-                        className="w-full bg-gray-50 rounded pl-10 py-2 pr-10 border-b-2 text-xl border-gray-200 focus:outline-none focus:border-blue-500"
-                    />
-                </div>
+               <InputSearchProducts />
                 {/*menu */}
                 {
                     userIsAuthenticated && (

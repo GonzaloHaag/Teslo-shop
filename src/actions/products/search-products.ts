@@ -15,11 +15,13 @@ export const searchProductsBdd = async( titleProduct:string ) => {
                     search:titleProduct
                 }
             },
+            
             select:{
                 //Para traer solo el titulo del producto y no todo
                 title:true,
                 slug:true
-            }
+            },
+            take: 10 //devuelvo solo los primeros 10
         });
 
         console.log(products)

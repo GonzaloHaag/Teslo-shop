@@ -1,5 +1,6 @@
 'use client';
 import { searchProductsBdd } from '@/actions'
+import { useUiStore } from '@/store/ui/ui-store';
 import Link from 'next/link';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { IoSearchOutline } from 'react-icons/io5'
@@ -8,7 +9,7 @@ export const InputSearchProducts = () => {
 
 
     const [titleSearchProduct,setTitleSearchProduct] = useState('');
-
+    const cerrarMenu = useUiStore((state) => state.closeSideMenu); //funcion que tengo en mi store para cambiar el estado del menu a false
 
     const guardarEscritoEnInput = (e:ChangeEvent<HTMLInputElement>) => {
        
@@ -23,30 +24,42 @@ export const InputSearchProducts = () => {
     setProductsBuscados( products || [] );
     }
 
+    const inputReset = () => {
+        setTitleSearchProduct('');
+        cerrarMenu();
+    }
+
     useEffect( () => {
       getSearchProducts();
     },[ titleSearchProduct ]);
   return (
-    <div className='mx-2 relative'>
-          <input onChange={ guardarEscritoEnInput } type='text' placeholder='Buscar' className='outline-none border-2 border-gray-200 focus:border-gray-300 py-2 indent-2 rounded' />
-          <IoSearchOutline className='w-5 h-5 cursor-pointer absolute right-2 top-3' />
-          <div className='absolute w-full bg-white rounded max-h-80 overflow-y-auto z-10 flex flex-col gap-y-5'>
+    <div className='mt-14 relative'>
+         <input value={ titleSearchProduct } onChange={ guardarEscritoEnInput } type="text" placeholder="Buscar"
+                        className="w-full bg-gray-50 rounded pl-10 py-2 pr-10 border-b-2 text-xl border-gray-200 focus:outline-none focus:border-blue-500"
+                    />
+          <IoSearchOutline size={20} className="absolute top-3 left-2" />
           {
-            productsBuscados.length === 0  && titleSearchProduct!== '' ? (
-                <p className='text-center text-sm'>No se encontraron resultados</p>
-            )
-            :
-            (
-                productsBuscados.map((product) => (
-                    <div key={product.slug} className='border-b-2 border-b-gray-200 hover:bg-gray-400 cursor-pointer p-2 rounded'>
-                    <Link onClick={() => setTitleSearchProduct('')} href={`/product/${ product.slug }`} key={product.title}>
-                        { product.title }
-                    </Link>
-                    </div>
-                ))
+            titleSearchProduct !== '' && (
+                <div className='absolute w-full bg-white top-12 rounded min-h-full overflow-y-clip z-10 flex flex-col gap-y-5 shadow-md'>
+                {
+      
+                  productsBuscados.length === 0  && titleSearchProduct!== '' ? (
+                      <p className='text-center text-sm mt-5'>No se encontraron resultados</p>
+                  )
+                  :
+                  (
+                      productsBuscados.map((product) => (
+                          <Link onClick={ inputReset } href={`/product/${ product.slug }`} key={product.title} className='border-b-2 border-b-gray-200 hover:bg-gray-400 cursor-pointer p-2 rounded'>
+                              { product.title }
+                          </Link>
+                          
+                      ))
+                  )
+                }
+                </div>
             )
           }
-          </div>
+         
    </div>
   )
 }
